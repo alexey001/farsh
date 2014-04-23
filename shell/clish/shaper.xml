@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" 
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+ xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema
+                     http://clish.sourceforge.net/XMLSchema/clish.xsd">
+	<!--=======================================================-->
+
+<VIEW name="enable-view">
+	<COMMAND name="shaper"
+		view="configure-shaper-view" 
+		help="Shaper configure mode" />
+</VIEW>
+
+<VIEW name="configure-shaper-view"
+	prompt="${SYSTEM_NAME}(config-shaper)# "
+	depth="1">
+
+	<NAMESPACE ref="configure-view"
+		help="false"
+		completion="true"/>
+
+	<COMMAND name="add"
+		help="Add shaper for IP/NET">
+		
+		<PARAM name="prefix"
+			help="Prefix (ip/mask) or ip (mask=/32)"
+			ptype="IP_ADDR_MASK" />
+		
+		<PARAM name="speed"
+			help="Shaper speed"
+			ptype="SPEED" />
+			
+		<PARAM name="class"
+			help="Traffic class (pipe number)"
+			optional="true"
+			ptype="UINT" />
+		
+		<PARAM name="comment"
+			help="Optional comment"
+			optional="true"
+			ptype="STRING" />
+	
+		<ACTION>shp.sh shaper_add ${prefix} ${speed} ${class} ${comment}</ACTION>
+	</COMMAND>
+
+	<COMMAND name="change"
+		help="Change shaper speed for IP/NET">
+		
+		<PARAM name="prefix"
+			help="Prefix (ip/mask) or ip (mask=/32)"
+			ptype="IP_ADDR_MASK" />
+		
+		<PARAM name="speed"
+			help="Shaper speed"
+			ptype="SPEED" />
+			
+	
+		<ACTION>shp.sh shaper_change ${prefix} ${speed}</ACTION>
+	</COMMAND>
+
+	
+	<COMMAND name="show"
+		help="Show all shaper database">
+		<ACTION>shp.sh show_shaper_db</ACTION>
+	</COMMAND>
+
+	<COMMAND name="del"
+		help="Delete shaper for IP/NET">
+		
+		<PARAM name="prefix"
+			help="Prefix (ip/mask) or ip (mask=/32)"
+			ptype="IP_ADDR_MASK" />
+			
+		<ACTION>shp.sh shaper_del ${prefix}</ACTION>
+	</COMMAND>
+
+
+
+</VIEW>
+
+</CLISH_MODULE>
