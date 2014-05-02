@@ -12,6 +12,7 @@ dev_out="imq1"
 ext_if="eth0.13"
 
 DEFAULT_CLASS=65534
+DEFAULT_SPEED="500mbit"
 RTABLE="100"
 RULE_FILE="rules_"
 
@@ -98,7 +99,7 @@ echo $(( $(( ${iparr[0]}  & ${netmaskarr[0]})) ))"."$(( $(( ${iparr[1]} & ${netm
 function check_db
 {
 db "create table IF NOT EXISTS  shp (net varchar(25) primary key,prefix int,speed ,class int,comment text);"
-db "create table IF NOT EXISTS freeid (id int);"
+db "create table IF NOT EXISTS freeid (id int primary key not null);"
 }
 
 
@@ -448,6 +449,14 @@ function shaper_init
     if_shaper_init
     ipt_init
     _ip route flush table $RTABLE
+    
+    local row
+    row=$(db2 "select count${LB}class${RB} FROM $DBT;")
+    
+    if [ $row = 0 ]
+    then
+    shaper_add 127.255.255.100/31 $DEFAULT_SPEED 1 'Class for unlimited users'
+    fi
 }
 
 function shaper_save_rules
@@ -476,7 +485,7 @@ function shaper_load_rules
 
 case $1 in
 	"show_shaper_db") show_shaper_db;;
-	"shaper_add") shaper_add $2 $3 $4;;
+	"shaper_add") shaper_add $2 $3 $4 $5;;
 	"shaper_del") shaper_del $2;;
 	"shaper_change") shaper_change $2 $3;;
 	"shaper_init") shaper_init;;
